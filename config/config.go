@@ -1,23 +1,28 @@
 package config
 
 import (
-	"log"
+	"synergy/models"
 
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/sqlite" // Use your specific driver
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
-var JWTSecret = []byte("S7BcXcSi580kdm3L9n1Cyy+53woz8wMgQVevAjNS9xA=")
 
-func InitDB() {
+func ConnectDatabase() {
 	var err error
-	DB, err = gorm.Open(sqlite.Open("recruitment.db"), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Failed to connect to the database", err)
+		panic("Failed to connect to the database!")
 	}
-	log.Println("Database connected!")
+
+	// Auto migrate the Job model to create the jobs table
+	if err := DB.AutoMigrate(&models.Job{}); err != nil {
+		panic("Failed to migrate database!")
+	}
 }
+
+var JWTSecret = []byte("S7BcXcSi580kdm3L9n1Cyy+53woz8wMgQVevAjNS9xA=")
 
 func GetJWTSecret() []byte {
 	return JWTSecret
