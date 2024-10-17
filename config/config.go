@@ -17,7 +17,7 @@ func ConnectDatabase() {
 	}
 
 	// Auto migrate the Job model to create the jobs table
-	if err := DB.AutoMigrate(&models.Job{}); err != nil {
+	if err := DB.AutoMigrate(&models.Job{}, &models.Profile{}); err != nil {
 		panic("Failed to migrate database!")
 	}
 }

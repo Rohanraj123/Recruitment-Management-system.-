@@ -6,14 +6,14 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	Name         string `json:"name"`
-	Email        string `json:"email" gorm:"unique"`
-	PasswordHash string `json:"-"`
-	UserType     string `json:"user_type"` // "Admin" or "Applicant"
-	Headline     string `json:"headline"`
-	Address      string `json:"address"`
-	Password     string `json:"password"` // Add this line
+	ID              uint `gorm:"primaryKey"`
+	Name            string
+	Email           string `gorm:"unique"`
+	Address         string
+	UserType        string // "APPLICANT" or "ADMIN"
+	PasswordHash    string
+	ProfileHeadline string
+	Profile         Profile
 }
 
 func (u *User) CreateUser(db *gorm.DB) error {
