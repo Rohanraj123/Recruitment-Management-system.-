@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"net/http"
-	"strings"
 	"synergy/utils"
 
 	"github.com/gin-gonic/gin"
@@ -10,34 +9,27 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the Authorization header
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token not provided"})
-			c.Abort()
-			return
-		}
-
-		// Extract the token from the header
-		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		if tokenString == authHeader {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Bearer token malformed"})
-			c.Abort()
-			return
-		}
-
-		// Validate the token and set user context
-		claims, err := utils.ValidateToken(tokenString)
+		// Validate the token
+		err := utils.ValidateToken(c)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token: " + err.Error()})
 			c.Abort()
 			return
 		}
 
-		// Set claims to the context
+		// Extract the claims after token validation
+		claims, err := utils.ExtractClaims(c)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Failed to extract claims: " + err.Error()})
+			c.Abort()
+			return
+		}
+
+		// Add user info to context
 		c.Set("user_type", claims.UserType)
 		c.Set("email", claims.Email)
 
+		// Debugging statement to log the user type
 		c.Next()
 	}
 }
