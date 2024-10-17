@@ -37,13 +37,13 @@ func main() {
 			admin.POST("/job", controllers.CreateJob)
 
 			// Fetch job details by job_id
-			// admin.GET("/job/:job_id", controllers.GetJobDetails)
+			admin.GET("/job/:job_id", controllers.getJobByIDHandler)
 
 			// Fetch all applicants
-			// admin.GET("/applicants", controllers.GetAllApplicants)
+			admin.GET("/applicants", controllers.getAllApplicantsHandler)
 
 			// Fetch a specific applicant by applicant_id
-			// admin.GET("/applicant/:applicant_id", controllers.GetApplicantDetails)
+			admin.GET("/applicant/:applicant_id", controllers.getApplicantByIDHandler)
 
 		}
 	}
